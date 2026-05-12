@@ -434,30 +434,33 @@ function TabDashboard({ extrato, ixcDaily, movim, conc, periodo }) {
   )
 }
 
-function TabExtrato({ extrato }) {
+function TabExtrato({ extrato, filtroForcado = null, showSaldo = true }) {
   const [filtro, setFiltro] = useState('Todos')
   const TIPOS = ['Todos', 'Boleto', 'PIX', 'Estorno', 'Tarifa', 'Déb.Conv.', 'Débito']
+  const filtroAtivo = filtroForcado || filtro
   const diasMap = {}
   extrato.forEach(e => { if (!diasMap[e.data]) diasMap[e.data] = []; diasMap[e.data].push(e) })
   const dias = Object.entries(diasMap).map(([data, rows]) => ({ data, rows, saldo: sum(rows, r => r.cd === 'C' ? r.valor : -r.valor) }))
-  const filtrado = filtro === 'Todos' ? dias : dias.map(d => ({ ...d, rows: d.rows.filter(r => r.tipo === filtro) })).filter(d => d.rows.length > 0)
-  const isD = filtro === 'Tarifa' || filtro === 'Déb.Conv.' || filtro === 'Débito'
-  const totF = filtro === 'Todos' ? sum(extrato.filter(e => e.cd === 'C'), e => e.valor) : sum(extrato.filter(e => e.tipo === filtro), e => e.valor)
+  const filtrado = filtroAtivo === 'Todos' ? dias : dias.map(d => ({ ...d, rows: d.rows.filter(r => r.tipo === filtroAtivo) })).filter(d => d.rows.length > 0)
+  const isD = filtroAtivo === 'Tarifa' || filtroAtivo === 'Déb.Conv.' || filtroAtivo === 'Débito'
+  const totF = filtroAtivo === 'Todos' ? sum(extrato.filter(e => e.cd === 'C'), e => e.valor) : sum(extrato.filter(e => e.tipo === filtroAtivo), e => e.valor)
   return (
     <div>
-      <div style={{ display: 'flex', gap: 7, marginBottom: 14, flexWrap: 'wrap' }}>
-        {TIPOS.map(f => <button key={f} onClick={() => setFiltro(f)} style={{ padding: '5px 13px', fontSize: 12, borderRadius: 20, border: 'none', background: f === filtro ? '#1B5FAA' : '#F0F4FB', color: f === filtro ? '#fff' : '#4A5568', fontWeight: f === filtro ? 600 : 400, cursor: 'pointer', transition: 'all .15s' }}>{f}</button>)}
-      </div>
+      {!filtroForcado && (
+        <div style={{ display: 'flex', gap: 7, marginBottom: 14, flexWrap: 'wrap' }}>
+          {TIPOS.map(f => <button key={f} onClick={() => setFiltro(f)} style={{ padding: '5px 13px', fontSize: 12, borderRadius: 20, border: 'none', background: f === filtro ? '#1B5FAA' : '#F0F4FB', color: f === filtro ? '#fff' : '#4A5568', fontWeight: f === filtro ? 600 : 400, cursor: 'pointer', transition: 'all .15s' }}>{f}</button>)}
+        </div>
+      )}
       <TableCard>
         <table>
           <thead><tr>
             <th style={{ width: 56 }}>Data</th>
             <th>Histórico / Depositante</th>
             <th style={{ width: 80 }}>Doc.</th>
-            <th style={{ width: 70 }}>Tipo</th>
+            {filtroForcado && <th style={{ width: 70 }}>Tipo</th>}
             <th style={{ textAlign: 'center', width: 40 }}>C/D</th>
             <th style={{ textAlign: 'right', width: 110 }}>Valor (R$)</th>
-            <th style={{ textAlign: 'right', width: 115 }}>Saldo Dia</th>
+            {showSaldo && <th style={{ textAlign: 'right', width: 115 }}>Saldo Dia</th>}
           </tr></thead>
           <tbody>
             {filtrado.flatMap((d, di) => d.rows.map((r, ri) => (
@@ -476,17 +479,17 @@ function TabExtrato({ extrato }) {
                   )}
                 </td>
                 <td style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: '#8A95A8' }}>{r.doc}</td>
-                <td><Badge tipo={r.tipo} /></td>
+                {filtroForcado && <td><Badge tipo={r.tipo} /></td>}
                 <td style={{ textAlign: 'center', fontWeight: 600, color: r.cd === 'C' ? '#1A8A55' : '#B86A10' }}>{r.cd}</td>
                 <td style={{ textAlign: 'right', fontFamily: "'DM Mono',monospace", color: r.cd === 'C' ? '#1B5FAA' : '#B86A10', fontWeight: 600 }}>{r.cd === 'C' ? '+' : '–'} {N(r.valor)}</td>
-                <td style={{ textAlign: 'right', fontFamily: "'DM Mono',monospace", color: d.saldo >= 0 ? '#1B5FAA' : '#C0392B', fontWeight: ri === 0 ? 700 : 400, opacity: ri === 0 ? 1 : 0 }}>{ri === 0 ? (d.saldo >= 0 ? '+' : '–') + ' ' + N(Math.abs(d.saldo)) : ''}</td>
+                {showSaldo && <td style={{ textAlign: 'right', fontFamily: "'DM Mono',monospace", color: d.saldo >= 0 ? '#1B5FAA' : '#C0392B', fontWeight: ri === 0 ? 700 : 400, opacity: ri === 0 ? 1 : 0 }}>{ri === 0 ? (d.saldo >= 0 ? '+' : '–') + ' ' + N(Math.abs(d.saldo)) : ''}</td>}
               </tr>
             )))}
           </tbody>
           <tfoot><tr>
-            <td colSpan={5}>TOTAL</td>
+            <td colSpan={filtroForcado ? 4 : 4}>TOTAL</td>
             <td style={{ textAlign: 'right', fontFamily: "'DM Mono',monospace", color: isD ? '#B86A10' : '#1B5FAA', fontWeight: 700 }}>{isD ? '– ' : '+  '}{N(totF)}</td>
-            <td />
+            {showSaldo && <td />}
           </tr></tfoot>
         </table>
       </TableCard>
@@ -835,6 +838,9 @@ const TABS = [
   { id: 'import', label: '📤 Importar', lock: false },
   { id: 'dashboard', label: '📊 Dashboard', lock: true },
   { id: 'extrato', label: '🏦 Extrato', lock: true },
+  { id: 'tarifas', label: '💰 Tarifas', lock: true },
+  { id: 'debConv', label: '🏢 Déb.Conv.', lock: true },
+  { id: 'debito', label: '💸 Débitos', lock: true },
   { id: 'movimentacao', label: '📑 Movimentação', lock: true },
   { id: 'ixc', label: '📋 IXC', lock: true },
   { id: 'conciliacao', label: '🔗 Conciliação', lock: true },
@@ -851,7 +857,12 @@ export default function ConciliadorApp() {
   const [conc, setConc] = useState(null)
   const [steps, setSteps] = useState([])
   const [exporting, setExporting] = useState(false)
+  const [showSaldo, setShowSaldo] = useState(true)
   const hasData = extrato.length > 0 && ixcDaily.length > 0
+
+  const handlePrint = useCallback(() => {
+    window.print()
+  }, [])
 
   const upd = (id, status, sub = '') => setSteps(p => p.map(s => s.id === id ? { ...s, status, sub } : s))
 
@@ -916,6 +927,14 @@ export default function ConciliadorApp() {
               {/* <p style={{ color: '#C8D8F0', fontSize: 11 }}>{CONTA}</p> */}
               <p style={{ color: '#8BAADD', fontSize: 11 }}>{periodo ? `Período: ${periodo}` : 'Nenhum período carregado'}</p>
             </div>
+            <button onClick={() => setShowSaldo(!showSaldo)}
+              style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '7px 12px', background: showSaldo ? '#0F6E56' : '#6B7280', color: '#fff', border: 'none', borderRadius: 7, fontSize: 12, fontWeight: 500, whiteSpace: 'nowrap', cursor: 'pointer', transition: 'all .2s' }}>
+              {showSaldo ? '👁️ Mostrar Saldo' : '🔒 Esconder Saldo'}
+            </button>
+            <button onClick={handlePrint}
+              style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '7px 12px', background: '#7C3AED', color: '#fff', border: 'none', borderRadius: 7, fontSize: 12, fontWeight: 500, whiteSpace: 'nowrap', cursor: 'pointer', transition: 'all .2s' }}>
+              🖨️ Imprimir
+            </button>
             <button disabled={!hasData || exporting} onClick={handleExport}
               style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '7px 16px', background: hasData ? '#2563EB' : '#1A3A7A', color: '#fff', border: 'none', borderRadius: 7, fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', cursor: hasData ? 'pointer' : 'not-allowed', opacity: hasData ? 1 : .5, transition: 'all .2s' }}>
               {exporting ? '⟳ Exportando...' : '⬇ Exportar Excel'}
@@ -937,7 +956,10 @@ export default function ConciliadorApp() {
         {screen === 'results' && hasData && conc && (
           <>
             {activeTab === 'dashboard' && <TabDashboard extrato={extrato} ixcDaily={ixcDaily} movim={movim} conc={conc} periodo={periodo} />}
-            {activeTab === 'extrato' && <TabExtrato extrato={extrato} />}
+            {activeTab === 'extrato' && <TabExtrato extrato={extrato} showSaldo={showSaldo} />}
+            {activeTab === 'tarifas' && <TabExtrato extrato={extrato} filtroForcado="Tarifa" showSaldo={showSaldo} />}
+            {activeTab === 'debConv' && <TabExtrato extrato={extrato} filtroForcado="Déb.Conv." showSaldo={showSaldo} />}
+            {activeTab === 'debito' && <TabExtrato extrato={extrato} filtroForcado="Débito" showSaldo={showSaldo} />}
             {activeTab === 'movimentacao' && <TabMovimentacao movim={movim} />}
             {activeTab === 'ixc' && <TabIXC ixcDaily={ixcDaily} ixcRecords={ixcRecs} />}
             {activeTab === 'conciliacao' && <TabConciliacao conc={conc} periodo={periodo} />}
