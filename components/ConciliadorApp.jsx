@@ -6,9 +6,9 @@ import {
 } from 'recharts'
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
-const EMPRESA = 'Telecom Fiber Net Ltda'
-const CNPJ = '22.969.088/0001-97'
-const CONTA = '46.752-9 — Sicoob Credirochas'
+// const EMPRESA = 'Telecom Fiber Net Ltda'
+// const CNPJ = '22.969.088/0001-97'
+// const CONTA = '46.752-9 — Sicoob Credirochas'
 
 const TIPO_STYLE = {
   Boleto: { bg: '#DDEAF9', color: '#0C3F7A' },
@@ -312,10 +312,10 @@ function ScreenUpload({ onProcess, onDemo }) {
         style={{ width: '100%', padding: 14, fontSize: 15, fontWeight: 700, background: ready ? '#1B5FAA' : '#C5D3E8', color: ready ? '#fff' : '#8A95A8', border: 'none', borderRadius: 10, cursor: ready ? 'pointer' : 'not-allowed', marginBottom: 10, transition: 'all .2s' }}>
         ⚡ Processar conciliação
       </button>
-      <button onClick={() => onDemo('Abril 2026')}
+      {/* <button onClick={() => onDemo('Abril 2026')}
         style={{ width: '100%', padding: 10, fontSize: 13, fontWeight: 500, background: 'none', color: '#1B5FAA', border: '1.5px solid #1B5FAA', borderRadius: 10, cursor: 'pointer' }}>
         🗂 Usar dados de exemplo (Abril 2026)
-      </button>
+      </button> */}
     </div>
   )
 }
@@ -664,171 +664,171 @@ function TabConciliacao({ conc, periodo }) {
 }
 
 // ─── DEMO DATA ────────────────────────────────────────────────────────────────
-function loadDemo() {
-  const extrato = [
-    { data: "01/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3439901", tipo: "Boleto", cd: "C", valor: 3883.40, contraparte: '' },
-    { data: "01/04", hist: "PIX receb. — Simone Rocha dos Santos", doc: "Pix", tipo: "PIX", cd: "C", valor: 25.00, contraparte: 'Simone Rocha dos Santos' },
-    { data: "01/04", hist: "TARIFA COBRANÇA", doc: "3445214", tipo: "Tarifa", cd: "D", valor: 28.00, contraparte: '' },
-    { data: "02/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3443768", tipo: "Boleto", cd: "C", valor: 2483.05, contraparte: '' },
-    { data: "02/04", hist: "OUTROS CRÉDITOS — estorno tarifa", doc: "ESTORNO", tipo: "Estorno", cd: "C", valor: 1685.60, contraparte: '' },
-    { data: "02/04", hist: "PIX receb. — Jose Luis de Paula", doc: "Pix", tipo: "PIX", cd: "C", valor: 100.00, contraparte: 'Jose Luis de Paula' },
-    { data: "02/04", hist: "TARIFA COBRANÇA", doc: "3448207", tipo: "Tarifa", cd: "D", valor: 16.80, contraparte: '' },
-    { data: "06/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3447406", tipo: "Boleto", cd: "C", valor: 2980.58, contraparte: '' },
-    { data: "06/04", hist: "PIX receb. — Lucia Helena da Silva Valente", doc: "Pix", tipo: "PIX", cd: "C", valor: 80.00, contraparte: 'Lucia Helena da Silva Valente' },
-    { data: "06/04", hist: "PIX Sicoob — Jose Cesario Rodegheri", doc: "31211047", tipo: "PIX", cd: "C", valor: 30.00, contraparte: 'Jose Cesario Rodegheri de Castro' },
-    { data: "06/04", hist: "PIX receb. — Tatiana Santos Figueira", doc: "Pix", tipo: "PIX", cd: "C", valor: 25.00, contraparte: 'Tatiana Santos Figueira' },
-    { data: "06/04", hist: "PIX receb. — Isabelli da Cruz Florencio", doc: "Pix", tipo: "PIX", cd: "C", valor: 50.00, contraparte: 'Isabelli da Cruz Florencio' },
-    { data: "06/04", hist: "PIX receb. — Rita Cristina C. Machado", doc: "Pix", tipo: "PIX", cd: "C", valor: 54.95, contraparte: 'Rita Cristina Coutinho Machado' },
-    { data: "06/04", hist: "PIX receb. — Andreza Rocha Beltrao", doc: "Pix", tipo: "PIX", cd: "C", valor: 25.00, contraparte: 'Andreza Rocha Beltrao' },
-    { data: "06/04", hist: "TARIFA COBRANÇA", doc: "3452007", tipo: "Tarifa", cd: "D", valor: 16.80, contraparte: '' },
-    { data: "07/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3450210", tipo: "Boleto", cd: "C", valor: 9065.17, contraparte: '' },
-    { data: "07/04", hist: "TARIFA COBRANÇA", doc: "3455425", tipo: "Tarifa", cd: "D", valor: 47.60, contraparte: '' },
-    { data: "08/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3454164", tipo: "Boleto", cd: "C", valor: 5377.18, contraparte: '' },
-    { data: "08/04", hist: "TARIFA COBRANÇA", doc: "3458983", tipo: "Tarifa", cd: "D", valor: 69.30, contraparte: '' },
-    { data: "09/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3457551", tipo: "Boleto", cd: "C", valor: 7113.29, contraparte: '' },
-    { data: "09/04", hist: "PIX receb. — Gilmar Guilherme", doc: "Pix", tipo: "PIX", cd: "C", valor: 65.00, contraparte: 'Gilmar Guilherme' },
-    { data: "09/04", hist: "PIX receb. — Brenda Moraes de Rezende", doc: "Pix", tipo: "PIX", cd: "C", valor: 80.00, contraparte: 'Brenda Moraes de Rezende' },
-    { data: "09/04", hist: "TARIFA COBRANÇA", doc: "3502311", tipo: "Tarifa", cd: "D", valor: 46.90, contraparte: '' },
-    { data: "10/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3460625", tipo: "Boleto", cd: "C", valor: 6913.98, contraparte: '' },
-    { data: "10/04", hist: "PIX receb. — Valeria Thuller", doc: "Pix", tipo: "PIX", cd: "C", valor: 25.00, contraparte: 'Valeria Thuller' },
-    { data: "10/04", hist: "PIX receb. — Mariane Gifoni de Souza", doc: "Pix", tipo: "PIX", cd: "C", valor: 79.90, contraparte: 'Mariane Gifoni de Souza' },
-    { data: "10/04", hist: "DÉB. CONV. SEGUROS", doc: "SICOOB SEG", tipo: "Déb.Conv.", cd: "D", valor: 92.07, contraparte: '' },
-    { data: "10/04", hist: "TARIFA COBRANÇA", doc: "3505989", tipo: "Tarifa", cd: "D", valor: 70.70, contraparte: '' },
-    { data: "13/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3503729", tipo: "Boleto", cd: "C", valor: 11933.90, contraparte: '' },
-    { data: "13/04", hist: "PIX receb. — Maria Eduarda D. Ferreira", doc: "Pix", tipo: "PIX", cd: "C", valor: 30.00, contraparte: 'Maria Eduarda Damasceno Ferreira' },
-    { data: "13/04", hist: "PIX receb. — Izabel Cristina Cardozo", doc: "Pix", tipo: "PIX", cd: "C", valor: 25.00, contraparte: 'Izabel Cristina Cardozo' },
-    { data: "13/04", hist: "TARIFA COBRANÇA", doc: "3509517", tipo: "Tarifa", cd: "D", valor: 2.10, contraparte: '' },
-    { data: "14/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3507707", tipo: "Boleto", cd: "C", valor: 6880.94, contraparte: '' },
-    { data: "14/04", hist: "TARIFA COBRANÇA", doc: "3509518", tipo: "Tarifa", cd: "D", valor: 32.20, contraparte: '' },
-    { data: "14/04", hist: "TARIFA COBRANÇA", doc: "3513232", tipo: "Tarifa", cd: "D", valor: 2.80, contraparte: '' },
-    { data: "15/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3511082", tipo: "Boleto", cd: "C", valor: 3112.99, contraparte: '' },
-    { data: "15/04", hist: "PIX receb. — Elayne Aparecida Amorim", doc: "Pix", tipo: "PIX", cd: "C", valor: 100.00, contraparte: 'Elayne Aparecida Amorim' },
-    { data: "15/04", hist: "PIX receb. — Francisco Sandro da Silva", doc: "Pix", tipo: "PIX", cd: "C", valor: 80.00, contraparte: 'Francisco Sandro da Silva' },
-    { data: "15/04", hist: "TARIFA COBRANÇA", doc: "3513233", tipo: "Tarifa", cd: "D", valor: 17.50, contraparte: '' },
-    { data: "15/04", hist: "TARIFA COBRANÇA", doc: "3516996", tipo: "Tarifa", cd: "D", valor: 1.40, contraparte: '' },
-    { data: "16/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3515963", tipo: "Boleto", cd: "C", valor: 4236.76, contraparte: '' },
-    { data: "16/04", hist: "PIX receb. — Kauani Alves Rosa da Silva", doc: "Pix", tipo: "PIX", cd: "C", valor: 50.00, contraparte: 'Kauani Alves Rosa da Silva' },
-    { data: "16/04", hist: "TARIFA COBRANÇA", doc: "3516997", tipo: "Tarifa", cd: "D", valor: 12.60, contraparte: '' },
-    { data: "16/04", hist: "TARIFA COBRANÇA", doc: "3520324", tipo: "Tarifa", cd: "D", valor: 2.80, contraparte: '' },
-    { data: "17/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3518886", tipo: "Boleto", cd: "C", valor: 4473.45, contraparte: '' },
-    { data: "17/04", hist: "PIX receb. — Willian Antunes Goncalves", doc: "Pix", tipo: "PIX", cd: "C", valor: 25.00, contraparte: 'Willian Antunes Goncalves' },
-    { data: "17/04", hist: "PIX receb. — Patrick Ferreira dos Santos", doc: "Pix", tipo: "PIX", cd: "C", valor: 79.90, contraparte: 'Patrick Ferreira dos Santos' },
-    { data: "17/04", hist: "TARIFA COBRANÇA", doc: "3520325", tipo: "Tarifa", cd: "D", valor: 16.80, contraparte: '' },
-    { data: "20/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3522054", tipo: "Boleto", cd: "C", valor: 4361.19, contraparte: '' },
-    { data: "20/04", hist: "PIX receb. — Maria Beatriz D. A. Pacheco", doc: "Pix", tipo: "PIX", cd: "C", valor: 70.00, contraparte: 'Maria Beatriz Durco Alves Pacheco' },
-    { data: "20/04", hist: "PIX receb. — Gabriela Goncalves Ignacio", doc: "Pix", tipo: "PIX", cd: "C", valor: 25.00, contraparte: 'Gabriela Goncalves Ignacio' },
-    { data: "20/04", hist: "TARIFA COBRANÇA", doc: "3559468", tipo: "Tarifa", cd: "D", valor: 21.00, contraparte: '' },
-    { data: "22/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3558463", tipo: "Boleto", cd: "C", valor: 19499.76, contraparte: '' },
-    { data: "22/04", hist: "PIX receb. — John Lenon Carvalho Rodrigues", doc: "Pix", tipo: "PIX", cd: "C", valor: 25.00, contraparte: 'John Lenon Carvalho Rodrigues' },
-    { data: "22/04", hist: "DÉB.CONV.DEM.EMPRES", doc: "DBAUTO VIS", tipo: "Déb.Conv.", cd: "D", valor: 9.90, contraparte: '' },
-    { data: "22/04", hist: "TARIFA COBRANÇA", doc: "3562657", tipo: "Tarifa", cd: "D", valor: 90.30, contraparte: '' },
-    { data: "23/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3561698", tipo: "Boleto", cd: "C", valor: 6545.64, contraparte: '' },
-    { data: "23/04", hist: "TARIFA COBRANÇA", doc: "3565451", tipo: "Tarifa", cd: "D", valor: 25.20, contraparte: '' },
-    { data: "24/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3564311", tipo: "Boleto", cd: "C", valor: 1946.22, contraparte: '' },
-    { data: "24/04", hist: "TARIFA COBRANÇA", doc: "3568267", tipo: "Tarifa", cd: "D", valor: 7.00, contraparte: '' },
-    { data: "27/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3567027", tipo: "Boleto", cd: "C", valor: 4785.57, contraparte: '' },
-    { data: "27/04", hist: "TARIFA COBRANÇA", doc: "3572050", tipo: "Tarifa", cd: "D", valor: 22.40, contraparte: '' },
-    { data: "28/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3569985", tipo: "Boleto", cd: "C", valor: 6233.21, contraparte: '' },
-    { data: "28/04", hist: "PIX receb. — Arcendino Raimundo Fontes", doc: "Pix", tipo: "PIX", cd: "C", valor: 100.00, contraparte: 'Arcendino Raimundo Fontes' },
-    { data: "28/04", hist: "TARIFA COBRANÇA", doc: "3572051", tipo: "Tarifa", cd: "D", valor: 22.40, contraparte: '' },
-    { data: "28/04", hist: "TARIFA COBRANÇA", doc: "3575894", tipo: "Tarifa", cd: "D", valor: 9.10, contraparte: '' },
-    { data: "29/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3574507", tipo: "Boleto", cd: "C", valor: 3783.69, contraparte: '' },
-    { data: "29/04", hist: "PIX receb. — Arcendino Raimundo Fontes", doc: "Pix", tipo: "PIX", cd: "C", valor: 25.00, contraparte: 'Arcendino Raimundo Fontes' },
-    { data: "29/04", hist: "PIX receb. — Angelica Maria Pacheco Leao", doc: "Pix", tipo: "PIX", cd: "C", valor: 100.00, contraparte: 'Angelica Maria Pacheco Leao' },
-    { data: "29/04", hist: "TARIFA COBRANÇA", doc: "3575895", tipo: "Tarifa", cd: "D", valor: 12.60, contraparte: '' },
-    { data: "30/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3577545", tipo: "Boleto", cd: "C", valor: 2317.66, contraparte: '' },
-    { data: "30/04", hist: "TARIFA COBRANÇA", doc: "3578948", tipo: "Tarifa", cd: "D", valor: 10.50, contraparte: '' },
-    { data: "30/04", hist: "TARIFA COBRANÇA", doc: "3583099", tipo: "Tarifa", cd: "D", valor: 18.90, contraparte: '' },
-    // ── DÉBITOS (PIX enviados, pagamentos, saques, cartão) ──
-    { data: "01/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 290.00, contraparte: '' },
-    { data: "01/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 22.95, contraparte: '10.573.521' },
-    { data: "01/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 150.00, contraparte: '' },
-    { data: "02/04", hist: "PIX enviado — Andreia Cordeiro", doc: "Pix", tipo: "Débito", cd: "D", valor: 739.35, contraparte: 'Andreia Cordeiro de Carvalho' },
-    { data: "02/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 298.42, contraparte: '31.423.015' },
-    { data: "06/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 200.00, contraparte: '' },
-    { data: "06/04", hist: "PIX enviado — Andreia Cordeiro de Carvalho", doc: "Pix", tipo: "Débito", cd: "D", valor: 253.26, contraparte: 'Andreia Cordeiro de Carvalho' },
-    { data: "06/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 400.00, contraparte: '' },
-    { data: "06/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31250651", tipo: "Débito", cd: "D", valor: 146.50, contraparte: '' },
-    { data: "06/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 820.00, contraparte: '' },
-    { data: "06/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 37.50, contraparte: '10.573.521' },
-    { data: "06/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 97.88, contraparte: '10.573.521' },
-    { data: "06/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31251003", tipo: "Débito", cd: "D", valor: 871.91, contraparte: '' },
-    { data: "07/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 3000.00, contraparte: '' },
-    { data: "07/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 5500.00, contraparte: '' },
-    { data: "07/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 1950.00, contraparte: '' },
-    { data: "07/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 2800.00, contraparte: '' },
-    { data: "07/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 11000.00, contraparte: '' },
-    { data: "07/04", hist: "DÉB.CONV.TELECOMUN", doc: "31271720", tipo: "Déb.Conv.", cd: "D", valor: 106.12, contraparte: '' },
-    { data: "07/04", hist: "DÉB.CONV.TELECOMUN", doc: "31271815", tipo: "Déb.Conv.", cd: "D", valor: 115.00, contraparte: '' },
-    { data: "07/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31274606", tipo: "Débito", cd: "D", valor: 300.00, contraparte: '' },
-    { data: "08/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 100.00, contraparte: '' },
-    { data: "08/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 3753.03, contraparte: '26.994.558' },
-    { data: "09/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 100.00, contraparte: '' },
-    { data: "13/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 150.00, contraparte: '' },
-    { data: "13/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 1454.90, contraparte: '10.573.521' },
-    { data: "13/04", hist: "DÉB.PGTO.BOLETO INT", doc: "31362579", tipo: "Débito", cd: "D", valor: 89.90, contraparte: '' },
-    { data: "13/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31362609", tipo: "Débito", cd: "D", valor: 450.00, contraparte: '' },
-    { data: "13/04", hist: "DÉB.CNV.EN.ELET.GAS", doc: "31362664", tipo: "Déb.Conv.", cd: "D", valor: 1362.78, contraparte: '' },
-    { data: "13/04", hist: "DÉB.CONV.TELECOMUN", doc: "31363020", tipo: "Déb.Conv.", cd: "D", valor: 48.22, contraparte: '' },
-    { data: "13/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 76.99, contraparte: '02.421.421' },
-    { data: "13/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 35.00, contraparte: '' },
-    { data: "13/04", hist: "COMP MASTER MAESTRO — JR FRANCA", doc: "460849", tipo: "Débito", cd: "D", valor: 53.98, contraparte: 'JR FRANCA RIO DAS FLORES' },
-    { data: "14/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 380.00, contraparte: '' },
-    { data: "14/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 79.90, contraparte: '' },
-    { data: "14/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 100.00, contraparte: '53.537.091' },
-    { data: "14/04", hist: "COMP MASTER MAESTRO — Posto Benfica", doc: "071094", tipo: "Débito", cd: "D", valor: 100.00, contraparte: 'POSTO BENFICA VALENCA' },
-    { data: "15/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 140.00, contraparte: '' },
-    { data: "15/04", hist: "PIX enviado — Academia Olimpo Training", doc: "31406982", tipo: "Débito", cd: "D", valor: 99.90, contraparte: 'ACADEMIA OLIMPO TRAINING LTDA' },
-    { data: "15/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 2191.05, contraparte: '32.356.784' },
-    { data: "16/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 630.00, contraparte: '' },
-    { data: "20/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 150.00, contraparte: '' },
-    { data: "20/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31466630", tipo: "Débito", cd: "D", valor: 714.90, contraparte: '' },
-    { data: "20/04", hist: "DB.CONV.TR FD-RFB", doc: "31466672", tipo: "Déb.Conv.", cd: "D", valor: 534.93, contraparte: 'FGTS / Receita Federal' },
-    { data: "20/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 1200.00, contraparte: '' },
-    { data: "20/04", hist: "DB.CONV.TR FD-RFB", doc: "31466743", tipo: "Déb.Conv.", cd: "D", valor: 8580.57, contraparte: 'FGTS / Receita Federal' },
-    { data: "20/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 226.80, contraparte: '10.573.521' },
-    { data: "20/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31470246", tipo: "Débito", cd: "D", valor: 12000.00, contraparte: '' },
-    { data: "20/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31471941", tipo: "Débito", cd: "D", valor: 72.09, contraparte: '' },
-    { data: "20/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31471962", tipo: "Débito", cd: "D", valor: 90.37, contraparte: '' },
-    { data: "20/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31471993", tipo: "Débito", cd: "D", valor: 476.08, contraparte: '' },
-    { data: "22/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 430.00, contraparte: '14.353.611' },
-    { data: "22/04", hist: "SAQUE NA AGENCIA", doc: "28", tipo: "Débito", cd: "D", valor: 40000.00, contraparte: 'WANDERSON M MORAES' },
-    { data: "22/04", hist: "COMP MASTER MAESTRO — Posto Comafel", doc: "542056", tipo: "Débito", cd: "D", valor: 150.00, contraparte: 'POSTO COMAFEL VALENCA' },
-    { data: "24/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 20000.00, contraparte: '43.590.288' },
-    { data: "24/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 100.00, contraparte: '' },
-    { data: "24/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 20000.00, contraparte: '' },
-    { data: "27/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 8.70, contraparte: '18.033.552' },
-    { data: "27/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31557335", tipo: "Débito", cd: "D", valor: 632.40, contraparte: '' },
-    { data: "27/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31557365", tipo: "Débito", cd: "D", valor: 2394.44, contraparte: '' },
-    { data: "28/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 150.00, contraparte: '' },
-    { data: "30/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 4605.00, contraparte: '59.557.746' },
-    { data: "30/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 20.00, contraparte: '' },
-  ]
-  const ixcDaily = [
-    { data: "01/04", tit: 39, bruto: 3883.40, desc: 350.00, acre: 172.99, liq: 3706.39 },
-    { data: "02/04", tit: 36, bruto: 2834.40, desc: 281.60, acre: 0, liq: 2483.05 },
-    { data: "06/04", tit: 62, bruto: 3262.18, desc: 331.60, acre: 50.00, liq: 2980.58 },
-    { data: "07/04", tit: 161, bruto: 9936.27, desc: 1020.20, acre: 149.10, liq: 9065.17 },
-    { data: "08/04", tit: 87, bruto: 5887.66, desc: 580.70, acre: 70.22, liq: 5377.18 },
-    { data: "09/04", tit: 108, bruto: 7786.29, desc: 742.50, acre: 69.50, liq: 7113.29 },
-    { data: "10/04", tit: 104, bruto: 7576.28, desc: 730.40, acre: 68.10, liq: 6913.98 },
-    { data: "13/04", tit: 191, bruto: 13097.89, desc: 1294.00, acre: 130.01, liq: 11933.90 },
-    { data: "14/04", tit: 112, bruto: 7543.14, desc: 742.59, acre: 80.39, liq: 6880.94 },
-    { data: "15/04", tit: 51, bruto: 3419.09, desc: 337.70, acre: 31.60, liq: 3112.99 },
-    { data: "16/04", tit: 63, bruto: 4631.36, desc: 440.60, acre: 46.00, liq: 4236.76 },
-    { data: "17/04", tit: 73, bruto: 4893.25, desc: 470.20, acre: 50.40, liq: 4473.45 },
-    { data: "20/04", tit: 63, bruto: 4771.39, desc: 460.20, acre: 50.00, liq: 4361.19 },
-    { data: "22/04", tit: 303, bruto: 21358.26, desc: 2098.80, acre: 240.30, liq: 19499.76 },
-    { data: "23/04", tit: 101, bruto: 7166.14, desc: 701.50, acre: 81.00, liq: 6545.64 },
-    { data: "24/04", tit: 30, bruto: 2128.42, desc: 210.40, acre: 28.20, liq: 1946.22 },
-    { data: "27/04", tit: 75, bruto: 5237.57, desc: 502.50, acre: 50.50, liq: 4785.57 },
-    { data: "28/04", tit: 101, bruto: 6826.41, desc: 660.00, acre: 66.80, liq: 6233.21 },
-    { data: "29/04", tit: 60, bruto: 4140.39, desc: 400.50, acre: 43.80, liq: 3783.69 },
-    { data: "30/04", tit: 35, bruto: 2530.66, desc: 253.00, acre: 40.00, liq: 2317.66 },
-  ]
-  const movim = { records: [], typeTotals: { '58': 71621.52, '212': 47286.19, '68': 191.59, '215': 119.90 }, totalLiquidado: 119219.20, totalBaixas: 6108.10 }
-  return { extrato, ixcDaily, ixcRecords: [], movim }
-}
+// function loadDemo() {
+//   const extrato = [
+//     { data: "01/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3439901", tipo: "Boleto", cd: "C", valor: 3883.40, contraparte: '' },
+//     { data: "01/04", hist: "PIX receb. — Simone Rocha dos Santos", doc: "Pix", tipo: "PIX", cd: "C", valor: 25.00, contraparte: 'Simone Rocha dos Santos' },
+//     { data: "01/04", hist: "TARIFA COBRANÇA", doc: "3445214", tipo: "Tarifa", cd: "D", valor: 28.00, contraparte: '' },
+//     { data: "02/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3443768", tipo: "Boleto", cd: "C", valor: 2483.05, contraparte: '' },
+//     { data: "02/04", hist: "OUTROS CRÉDITOS — estorno tarifa", doc: "ESTORNO", tipo: "Estorno", cd: "C", valor: 1685.60, contraparte: '' },
+//     { data: "02/04", hist: "PIX receb. — Jose Luis de Paula", doc: "Pix", tipo: "PIX", cd: "C", valor: 100.00, contraparte: 'Jose Luis de Paula' },
+//     { data: "02/04", hist: "TARIFA COBRANÇA", doc: "3448207", tipo: "Tarifa", cd: "D", valor: 16.80, contraparte: '' },
+//     { data: "06/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3447406", tipo: "Boleto", cd: "C", valor: 2980.58, contraparte: '' },
+//     { data: "06/04", hist: "PIX receb. — Lucia Helena da Silva Valente", doc: "Pix", tipo: "PIX", cd: "C", valor: 80.00, contraparte: 'Lucia Helena da Silva Valente' },
+//     { data: "06/04", hist: "PIX Sicoob — Jose Cesario Rodegheri", doc: "31211047", tipo: "PIX", cd: "C", valor: 30.00, contraparte: 'Jose Cesario Rodegheri de Castro' },
+//     { data: "06/04", hist: "PIX receb. — Tatiana Santos Figueira", doc: "Pix", tipo: "PIX", cd: "C", valor: 25.00, contraparte: 'Tatiana Santos Figueira' },
+//     { data: "06/04", hist: "PIX receb. — Isabelli da Cruz Florencio", doc: "Pix", tipo: "PIX", cd: "C", valor: 50.00, contraparte: 'Isabelli da Cruz Florencio' },
+//     { data: "06/04", hist: "PIX receb. — Rita Cristina C. Machado", doc: "Pix", tipo: "PIX", cd: "C", valor: 54.95, contraparte: 'Rita Cristina Coutinho Machado' },
+//     { data: "06/04", hist: "PIX receb. — Andreza Rocha Beltrao", doc: "Pix", tipo: "PIX", cd: "C", valor: 25.00, contraparte: 'Andreza Rocha Beltrao' },
+//     { data: "06/04", hist: "TARIFA COBRANÇA", doc: "3452007", tipo: "Tarifa", cd: "D", valor: 16.80, contraparte: '' },
+//     { data: "07/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3450210", tipo: "Boleto", cd: "C", valor: 9065.17, contraparte: '' },
+//     { data: "07/04", hist: "TARIFA COBRANÇA", doc: "3455425", tipo: "Tarifa", cd: "D", valor: 47.60, contraparte: '' },
+//     { data: "08/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3454164", tipo: "Boleto", cd: "C", valor: 5377.18, contraparte: '' },
+//     { data: "08/04", hist: "TARIFA COBRANÇA", doc: "3458983", tipo: "Tarifa", cd: "D", valor: 69.30, contraparte: '' },
+//     { data: "09/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3457551", tipo: "Boleto", cd: "C", valor: 7113.29, contraparte: '' },
+//     { data: "09/04", hist: "PIX receb. — Gilmar Guilherme", doc: "Pix", tipo: "PIX", cd: "C", valor: 65.00, contraparte: 'Gilmar Guilherme' },
+//     { data: "09/04", hist: "PIX receb. — Brenda Moraes de Rezende", doc: "Pix", tipo: "PIX", cd: "C", valor: 80.00, contraparte: 'Brenda Moraes de Rezende' },
+//     { data: "09/04", hist: "TARIFA COBRANÇA", doc: "3502311", tipo: "Tarifa", cd: "D", valor: 46.90, contraparte: '' },
+//     { data: "10/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3460625", tipo: "Boleto", cd: "C", valor: 6913.98, contraparte: '' },
+//     { data: "10/04", hist: "PIX receb. — Valeria Thuller", doc: "Pix", tipo: "PIX", cd: "C", valor: 25.00, contraparte: 'Valeria Thuller' },
+//     { data: "10/04", hist: "PIX receb. — Mariane Gifoni de Souza", doc: "Pix", tipo: "PIX", cd: "C", valor: 79.90, contraparte: 'Mariane Gifoni de Souza' },
+//     { data: "10/04", hist: "DÉB. CONV. SEGUROS", doc: "SICOOB SEG", tipo: "Déb.Conv.", cd: "D", valor: 92.07, contraparte: '' },
+//     { data: "10/04", hist: "TARIFA COBRANÇA", doc: "3505989", tipo: "Tarifa", cd: "D", valor: 70.70, contraparte: '' },
+//     { data: "13/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3503729", tipo: "Boleto", cd: "C", valor: 11933.90, contraparte: '' },
+//     { data: "13/04", hist: "PIX receb. — Maria Eduarda D. Ferreira", doc: "Pix", tipo: "PIX", cd: "C", valor: 30.00, contraparte: 'Maria Eduarda Damasceno Ferreira' },
+//     { data: "13/04", hist: "PIX receb. — Izabel Cristina Cardozo", doc: "Pix", tipo: "PIX", cd: "C", valor: 25.00, contraparte: 'Izabel Cristina Cardozo' },
+//     { data: "13/04", hist: "TARIFA COBRANÇA", doc: "3509517", tipo: "Tarifa", cd: "D", valor: 2.10, contraparte: '' },
+//     { data: "14/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3507707", tipo: "Boleto", cd: "C", valor: 6880.94, contraparte: '' },
+//     { data: "14/04", hist: "TARIFA COBRANÇA", doc: "3509518", tipo: "Tarifa", cd: "D", valor: 32.20, contraparte: '' },
+//     { data: "14/04", hist: "TARIFA COBRANÇA", doc: "3513232", tipo: "Tarifa", cd: "D", valor: 2.80, contraparte: '' },
+//     { data: "15/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3511082", tipo: "Boleto", cd: "C", valor: 3112.99, contraparte: '' },
+//     { data: "15/04", hist: "PIX receb. — Elayne Aparecida Amorim", doc: "Pix", tipo: "PIX", cd: "C", valor: 100.00, contraparte: 'Elayne Aparecida Amorim' },
+//     { data: "15/04", hist: "PIX receb. — Francisco Sandro da Silva", doc: "Pix", tipo: "PIX", cd: "C", valor: 80.00, contraparte: 'Francisco Sandro da Silva' },
+//     { data: "15/04", hist: "TARIFA COBRANÇA", doc: "3513233", tipo: "Tarifa", cd: "D", valor: 17.50, contraparte: '' },
+//     { data: "15/04", hist: "TARIFA COBRANÇA", doc: "3516996", tipo: "Tarifa", cd: "D", valor: 1.40, contraparte: '' },
+//     { data: "16/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3515963", tipo: "Boleto", cd: "C", valor: 4236.76, contraparte: '' },
+//     { data: "16/04", hist: "PIX receb. — Kauani Alves Rosa da Silva", doc: "Pix", tipo: "PIX", cd: "C", valor: 50.00, contraparte: 'Kauani Alves Rosa da Silva' },
+//     { data: "16/04", hist: "TARIFA COBRANÇA", doc: "3516997", tipo: "Tarifa", cd: "D", valor: 12.60, contraparte: '' },
+//     { data: "16/04", hist: "TARIFA COBRANÇA", doc: "3520324", tipo: "Tarifa", cd: "D", valor: 2.80, contraparte: '' },
+//     { data: "17/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3518886", tipo: "Boleto", cd: "C", valor: 4473.45, contraparte: '' },
+//     { data: "17/04", hist: "PIX receb. — Willian Antunes Goncalves", doc: "Pix", tipo: "PIX", cd: "C", valor: 25.00, contraparte: 'Willian Antunes Goncalves' },
+//     { data: "17/04", hist: "PIX receb. — Patrick Ferreira dos Santos", doc: "Pix", tipo: "PIX", cd: "C", valor: 79.90, contraparte: 'Patrick Ferreira dos Santos' },
+//     { data: "17/04", hist: "TARIFA COBRANÇA", doc: "3520325", tipo: "Tarifa", cd: "D", valor: 16.80, contraparte: '' },
+//     { data: "20/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3522054", tipo: "Boleto", cd: "C", valor: 4361.19, contraparte: '' },
+//     { data: "20/04", hist: "PIX receb. — Maria Beatriz D. A. Pacheco", doc: "Pix", tipo: "PIX", cd: "C", valor: 70.00, contraparte: 'Maria Beatriz Durco Alves Pacheco' },
+//     { data: "20/04", hist: "PIX receb. — Gabriela Goncalves Ignacio", doc: "Pix", tipo: "PIX", cd: "C", valor: 25.00, contraparte: 'Gabriela Goncalves Ignacio' },
+//     { data: "20/04", hist: "TARIFA COBRANÇA", doc: "3559468", tipo: "Tarifa", cd: "D", valor: 21.00, contraparte: '' },
+//     { data: "22/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3558463", tipo: "Boleto", cd: "C", valor: 19499.76, contraparte: '' },
+//     { data: "22/04", hist: "PIX receb. — John Lenon Carvalho Rodrigues", doc: "Pix", tipo: "PIX", cd: "C", valor: 25.00, contraparte: 'John Lenon Carvalho Rodrigues' },
+//     { data: "22/04", hist: "DÉB.CONV.DEM.EMPRES", doc: "DBAUTO VIS", tipo: "Déb.Conv.", cd: "D", valor: 9.90, contraparte: '' },
+//     { data: "22/04", hist: "TARIFA COBRANÇA", doc: "3562657", tipo: "Tarifa", cd: "D", valor: 90.30, contraparte: '' },
+//     { data: "23/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3561698", tipo: "Boleto", cd: "C", valor: 6545.64, contraparte: '' },
+//     { data: "23/04", hist: "TARIFA COBRANÇA", doc: "3565451", tipo: "Tarifa", cd: "D", valor: 25.20, contraparte: '' },
+//     { data: "24/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3564311", tipo: "Boleto", cd: "C", valor: 1946.22, contraparte: '' },
+//     { data: "24/04", hist: "TARIFA COBRANÇA", doc: "3568267", tipo: "Tarifa", cd: "D", valor: 7.00, contraparte: '' },
+//     { data: "27/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3567027", tipo: "Boleto", cd: "C", valor: 4785.57, contraparte: '' },
+//     { data: "27/04", hist: "TARIFA COBRANÇA", doc: "3572050", tipo: "Tarifa", cd: "D", valor: 22.40, contraparte: '' },
+//     { data: "28/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3569985", tipo: "Boleto", cd: "C", valor: 6233.21, contraparte: '' },
+//     { data: "28/04", hist: "PIX receb. — Arcendino Raimundo Fontes", doc: "Pix", tipo: "PIX", cd: "C", valor: 100.00, contraparte: 'Arcendino Raimundo Fontes' },
+//     { data: "28/04", hist: "TARIFA COBRANÇA", doc: "3572051", tipo: "Tarifa", cd: "D", valor: 22.40, contraparte: '' },
+//     { data: "28/04", hist: "TARIFA COBRANÇA", doc: "3575894", tipo: "Tarifa", cd: "D", valor: 9.10, contraparte: '' },
+//     { data: "29/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3574507", tipo: "Boleto", cd: "C", valor: 3783.69, contraparte: '' },
+//     { data: "29/04", hist: "PIX receb. — Arcendino Raimundo Fontes", doc: "Pix", tipo: "PIX", cd: "C", valor: 25.00, contraparte: 'Arcendino Raimundo Fontes' },
+//     { data: "29/04", hist: "PIX receb. — Angelica Maria Pacheco Leao", doc: "Pix", tipo: "PIX", cd: "C", valor: 100.00, contraparte: 'Angelica Maria Pacheco Leao' },
+//     { data: "29/04", hist: "TARIFA COBRANÇA", doc: "3575895", tipo: "Tarifa", cd: "D", valor: 12.60, contraparte: '' },
+//     { data: "30/04", hist: "CRÉD.LIQ.COBRANÇA", doc: "3577545", tipo: "Boleto", cd: "C", valor: 2317.66, contraparte: '' },
+//     { data: "30/04", hist: "TARIFA COBRANÇA", doc: "3578948", tipo: "Tarifa", cd: "D", valor: 10.50, contraparte: '' },
+//     { data: "30/04", hist: "TARIFA COBRANÇA", doc: "3583099", tipo: "Tarifa", cd: "D", valor: 18.90, contraparte: '' },
+//     ── DÉBITOS (PIX enviados, pagamentos, saques, cartão) ──
+//     { data: "01/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 290.00, contraparte: '' },
+//     { data: "01/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 22.95, contraparte: '10.573.521' },
+//     { data: "01/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 150.00, contraparte: '' },
+//     { data: "02/04", hist: "PIX enviado — Andreia Cordeiro", doc: "Pix", tipo: "Débito", cd: "D", valor: 739.35, contraparte: 'Andreia Cordeiro de Carvalho' },
+//     { data: "02/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 298.42, contraparte: '31.423.015' },
+//     { data: "06/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 200.00, contraparte: '' },
+//     { data: "06/04", hist: "PIX enviado — Andreia Cordeiro de Carvalho", doc: "Pix", tipo: "Débito", cd: "D", valor: 253.26, contraparte: 'Andreia Cordeiro de Carvalho' },
+//     { data: "06/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 400.00, contraparte: '' },
+//     { data: "06/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31250651", tipo: "Débito", cd: "D", valor: 146.50, contraparte: '' },
+//     { data: "06/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 820.00, contraparte: '' },
+//     { data: "06/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 37.50, contraparte: '10.573.521' },
+//     { data: "06/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 97.88, contraparte: '10.573.521' },
+//     { data: "06/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31251003", tipo: "Débito", cd: "D", valor: 871.91, contraparte: '' },
+//     { data: "07/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 3000.00, contraparte: '' },
+//     { data: "07/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 5500.00, contraparte: '' },
+//     { data: "07/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 1950.00, contraparte: '' },
+//     { data: "07/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 2800.00, contraparte: '' },
+//     { data: "07/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 11000.00, contraparte: '' },
+//     { data: "07/04", hist: "DÉB.CONV.TELECOMUN", doc: "31271720", tipo: "Déb.Conv.", cd: "D", valor: 106.12, contraparte: '' },
+//     { data: "07/04", hist: "DÉB.CONV.TELECOMUN", doc: "31271815", tipo: "Déb.Conv.", cd: "D", valor: 115.00, contraparte: '' },
+//     { data: "07/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31274606", tipo: "Débito", cd: "D", valor: 300.00, contraparte: '' },
+//     { data: "08/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 100.00, contraparte: '' },
+//     { data: "08/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 3753.03, contraparte: '26.994.558' },
+//     { data: "09/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 100.00, contraparte: '' },
+//     { data: "13/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 150.00, contraparte: '' },
+//     { data: "13/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 1454.90, contraparte: '10.573.521' },
+//     { data: "13/04", hist: "DÉB.PGTO.BOLETO INT", doc: "31362579", tipo: "Débito", cd: "D", valor: 89.90, contraparte: '' },
+//     { data: "13/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31362609", tipo: "Débito", cd: "D", valor: 450.00, contraparte: '' },
+//     { data: "13/04", hist: "DÉB.CNV.EN.ELET.GAS", doc: "31362664", tipo: "Déb.Conv.", cd: "D", valor: 1362.78, contraparte: '' },
+//     { data: "13/04", hist: "DÉB.CONV.TELECOMUN", doc: "31363020", tipo: "Déb.Conv.", cd: "D", valor: 48.22, contraparte: '' },
+//     { data: "13/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 76.99, contraparte: '02.421.421' },
+//     { data: "13/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 35.00, contraparte: '' },
+//     { data: "13/04", hist: "COMP MASTER MAESTRO — JR FRANCA", doc: "460849", tipo: "Débito", cd: "D", valor: 53.98, contraparte: 'JR FRANCA RIO DAS FLORES' },
+//     { data: "14/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 380.00, contraparte: '' },
+//     { data: "14/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 79.90, contraparte: '' },
+//     { data: "14/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 100.00, contraparte: '53.537.091' },
+//     { data: "14/04", hist: "COMP MASTER MAESTRO — Posto Benfica", doc: "071094", tipo: "Débito", cd: "D", valor: 100.00, contraparte: 'POSTO BENFICA VALENCA' },
+//     { data: "15/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 140.00, contraparte: '' },
+//     { data: "15/04", hist: "PIX enviado — Academia Olimpo Training", doc: "31406982", tipo: "Débito", cd: "D", valor: 99.90, contraparte: 'ACADEMIA OLIMPO TRAINING LTDA' },
+//     { data: "15/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 2191.05, contraparte: '32.356.784' },
+//     { data: "16/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 630.00, contraparte: '' },
+//     { data: "20/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 150.00, contraparte: '' },
+//     { data: "20/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31466630", tipo: "Débito", cd: "D", valor: 714.90, contraparte: '' },
+//     { data: "20/04", hist: "DB.CONV.TR FD-RFB", doc: "31466672", tipo: "Déb.Conv.", cd: "D", valor: 534.93, contraparte: 'FGTS / Receita Federal' },
+//     { data: "20/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 1200.00, contraparte: '' },
+//     { data: "20/04", hist: "DB.CONV.TR FD-RFB", doc: "31466743", tipo: "Déb.Conv.", cd: "D", valor: 8580.57, contraparte: 'FGTS / Receita Federal' },
+//     { data: "20/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 226.80, contraparte: '10.573.521' },
+//     { data: "20/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31470246", tipo: "Débito", cd: "D", valor: 12000.00, contraparte: '' },
+//     { data: "20/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31471941", tipo: "Débito", cd: "D", valor: 72.09, contraparte: '' },
+//     { data: "20/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31471962", tipo: "Débito", cd: "D", valor: 90.37, contraparte: '' },
+//     { data: "20/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31471993", tipo: "Débito", cd: "D", valor: 476.08, contraparte: '' },
+//     { data: "22/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 430.00, contraparte: '14.353.611' },
+//     { data: "22/04", hist: "SAQUE NA AGENCIA", doc: "28", tipo: "Débito", cd: "D", valor: 40000.00, contraparte: 'WANDERSON M MORAES' },
+//     { data: "22/04", hist: "COMP MASTER MAESTRO — Posto Comafel", doc: "542056", tipo: "Débito", cd: "D", valor: 150.00, contraparte: 'POSTO COMAFEL VALENCA' },
+//     { data: "24/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 20000.00, contraparte: '43.590.288' },
+//     { data: "24/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 100.00, contraparte: '' },
+//     { data: "24/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 20000.00, contraparte: '' },
+//     { data: "27/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 8.70, contraparte: '18.033.552' },
+//     { data: "27/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31557335", tipo: "Débito", cd: "D", valor: 632.40, contraparte: '' },
+//     { data: "27/04", hist: "DÉB.TIT.COMPE.EFETI", doc: "31557365", tipo: "Débito", cd: "D", valor: 2394.44, contraparte: '' },
+//     { data: "28/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 150.00, contraparte: '' },
+//     { data: "30/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 4605.00, contraparte: '59.557.746' },
+//     { data: "30/04", hist: "PIX enviado", doc: "Pix", tipo: "Débito", cd: "D", valor: 20.00, contraparte: '' },
+//   ]
+//   const ixcDaily = [
+//     { data: "01/04", tit: 39, bruto: 3883.40, desc: 350.00, acre: 172.99, liq: 3706.39 },
+//     { data: "02/04", tit: 36, bruto: 2834.40, desc: 281.60, acre: 0, liq: 2483.05 },
+//     { data: "06/04", tit: 62, bruto: 3262.18, desc: 331.60, acre: 50.00, liq: 2980.58 },
+//     { data: "07/04", tit: 161, bruto: 9936.27, desc: 1020.20, acre: 149.10, liq: 9065.17 },
+//     { data: "08/04", tit: 87, bruto: 5887.66, desc: 580.70, acre: 70.22, liq: 5377.18 },
+//     { data: "09/04", tit: 108, bruto: 7786.29, desc: 742.50, acre: 69.50, liq: 7113.29 },
+//     { data: "10/04", tit: 104, bruto: 7576.28, desc: 730.40, acre: 68.10, liq: 6913.98 },
+//     { data: "13/04", tit: 191, bruto: 13097.89, desc: 1294.00, acre: 130.01, liq: 11933.90 },
+//     { data: "14/04", tit: 112, bruto: 7543.14, desc: 742.59, acre: 80.39, liq: 6880.94 },
+//     { data: "15/04", tit: 51, bruto: 3419.09, desc: 337.70, acre: 31.60, liq: 3112.99 },
+//     { data: "16/04", tit: 63, bruto: 4631.36, desc: 440.60, acre: 46.00, liq: 4236.76 },
+//     { data: "17/04", tit: 73, bruto: 4893.25, desc: 470.20, acre: 50.40, liq: 4473.45 },
+//     { data: "20/04", tit: 63, bruto: 4771.39, desc: 460.20, acre: 50.00, liq: 4361.19 },
+//     { data: "22/04", tit: 303, bruto: 21358.26, desc: 2098.80, acre: 240.30, liq: 19499.76 },
+//     { data: "23/04", tit: 101, bruto: 7166.14, desc: 701.50, acre: 81.00, liq: 6545.64 },
+//     { data: "24/04", tit: 30, bruto: 2128.42, desc: 210.40, acre: 28.20, liq: 1946.22 },
+//     { data: "27/04", tit: 75, bruto: 5237.57, desc: 502.50, acre: 50.50, liq: 4785.57 },
+//     { data: "28/04", tit: 101, bruto: 6826.41, desc: 660.00, acre: 66.80, liq: 6233.21 },
+//     { data: "29/04", tit: 60, bruto: 4140.39, desc: 400.50, acre: 43.80, liq: 3783.69 },
+//     { data: "30/04", tit: 35, bruto: 2530.66, desc: 253.00, acre: 40.00, liq: 2317.66 },
+//   ]
+//   const movim = { records: [], typeTotals: { '58': 71621.52, '212': 47286.19, '68': 191.59, '215': 119.90 }, totalLiquidado: 119219.20, totalBaixas: 6108.10 }
+//   return { extrato, ixcDaily, ixcRecords: [], movim }
+// }
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
 const TABS = [
@@ -906,14 +906,14 @@ export default function ConciliadorApp() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 56, gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <div style={{ width: 34, height: 34, background: 'linear-gradient(135deg,#3B82F6,#1B5FAA)', borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17 }}>💠</div>
-            <div>
+            {/* <div>
               <p style={{ color: '#fff', fontWeight: 700, fontSize: 14 }}>FiberNet Conciliador</p>
               <p style={{ color: '#8BAADD', fontSize: 11 }}>{EMPRESA} · {CNPJ}</p>
-            </div>
+            </div> */}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ textAlign: 'right', marginRight: 4 }}>
-              <p style={{ color: '#C8D8F0', fontSize: 11 }}>{CONTA}</p>
+              {/* <p style={{ color: '#C8D8F0', fontSize: 11 }}>{CONTA}</p> */}
               <p style={{ color: '#8BAADD', fontSize: 11 }}>{periodo ? `Período: ${periodo}` : 'Nenhum período carregado'}</p>
             </div>
             <button disabled={!hasData || exporting} onClick={handleExport}
@@ -944,9 +944,9 @@ export default function ConciliadorApp() {
           </>
         )}
       </div>
-      <div style={{ textAlign: 'center', padding: 14, color: '#9AA5BC', fontSize: 11, borderTop: '1px solid #E8EDF5', background: '#fff', marginTop: 20 }}>
+      {/* <div style={{ textAlign: 'center', padding: 14, color: '#9AA5BC', fontSize: 11, borderTop: '1px solid #E8EDF5', background: '#fff', marginTop: 20 }}>
         FiberNet Conciliador{periodo ? ` · ${periodo}` : ''} · {EMPRESA}
-      </div>
+      </div> */}
     </div>
   )
 }
