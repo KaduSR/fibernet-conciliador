@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic'
 
-const ConciliadorApp = dynamic(() => import('../components/ConciliadorApp'), {
+const ConciliadorApp = dynamic(() => import('../../components/ConciliadorApp'), {
   ssr: false,
   loading: () => (
     <div style={{
@@ -21,5 +21,5 @@ const ConciliadorApp = dynamic(() => import('../components/ConciliadorApp'), {
 })
 
 export default function Home() {
-  return <ConciliadorApp />
+  return <ConciliadorApp />;
 }

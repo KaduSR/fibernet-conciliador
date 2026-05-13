@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
+import { useApp } from '@/context/AppContext'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts'
@@ -24,7 +25,7 @@ const LIQ_COLORS = { '58': '#1B5FAA', '68': '#0F6E56', '82': '#C0392B', '212': '
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 const R = v => 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-const N = v => Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+const N = v => 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 const sum = (arr, fn) => arr.reduce((s, x) => s + (fn ? fn(x) : x), 0)
 
 function Badge({ tipo }) {
@@ -282,7 +283,7 @@ function TableCard({ children }) {
 }
 
 // ─── SCREENS ──────────────────────────────────────────────────────────────────
-function ScreenUpload({ onProcess, onDemo }) {
+function ScreenUpload({ onProcess }) {
   const [files, setFiles] = useState({ extrato: null, movim: null, ixc: null })
   const [mes, setMes] = useState('04')
   const [ano, setAno] = useState('2026')
@@ -345,6 +346,141 @@ function ScreenProcessing({ steps }) {
 }
 
 // ─── TABS ────────────────────────────────────────────────────────────────────
+function TabComparacao({ extrato, ixcDaily, ixcRecords, conc, periodo }) {
+  const creditosBanco = extrato.filter(e => e.cd === 'C')
+  const totalCreditosBanco = sum(creditosBanco, e => e.valor)
+
+  const totIXC = sum(ixcDaily, r => r.liq)
+  const totBrutoIXC = sum(ixcDaily, r => r.bruto)
+
+  const porDia = (() => {
+    const map = {}
+    creditosBanco.forEach(e => {
+      if (!map[e.data]) map[e.data] = { data: e.data, banco: 0, ixc: 0 }
+      map[e.data].banco += e.valor
+    })
+    ixcDaily.forEach(r => {
+      if (!map[r.data]) map[r.data] = { data: r.data, banco: 0, ixc: 0 }
+      map[r.data].ixc += r.liq
+    })
+    return Object.values(map).sort((a, b) => {
+      const [da, ma] = a.data.split('/').map(Number), [db, mb] = b.data.split('/').map(Number)
+      return ma !== mb ? ma - mb : da - db
+    })
+  })()
+
+  const porTipoBanco = {
+    'Boleto': sum(creditosBanco.filter(e => e.tipo === 'Boleto'), e => e.valor),
+    'PIX': sum(creditosBanco.filter(e => e.tipo === 'PIX'), e => e.valor),
+    'Estorno': sum(creditosBanco.filter(e => e.tipo === 'Estorno'), e => e.valor),
+  }
+  const totalCreditos = porTipoBanco.Boleto + porTipoBanco.PIX + porTipoBanco.Estorno
+
+  return (
+    <div>
+      <div style={{ background: '#fff', border: '1px solid #E8EDF5', borderRadius: 10, padding: '16px 20px', marginBottom: 18 }}>
+        <h3 style={{ fontSize: 15, fontWeight: 700, color: '#2A3348', marginBottom: 4 }}>Comparação Total de Entradas</h3>
+        <p style={{ fontSize: 12, color: '#6B7A96' }}>Todos os créditos no banco vs. todos os recebimentos no IXC — {periodo}</p>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 12, marginBottom: 20 }}>
+        <SCard label="IXC Valor Bruto" value={R(totBrutoIXC)} sub="Antes de descontos" color="#0F6E56" />
+        <SCard label="IXC Valor Líquido" value={R(totIXC)} sub="Após acertos" color="#1B5FAA" />
+        <SCard label="Banco Total Crédito" value={R(totalCreditosBanco)} sub="Todos os créditos (C)" color="#7C3AED" />
+        <SCard label="Diferença" value={R(Math.abs(totalCreditosBanco - totIXC))} color={totalCreditosBanco === totIXC ? '#1A8A55' : '#C0392B'} sub={totalCreditosBanco === totIXC ? '✓ Igual' : '≠ Diferente'} warn={totalCreditosBanco !== totIXC} />
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+        <div style={{ background: '#fff', border: '1px solid #E8EDF5', borderRadius: 10, padding: '14px 18px' }}>
+          <p style={{ fontSize: 13, fontWeight: 600, color: '#2A3348', marginBottom: 12 }}>Entrada por tipo — Banco</p>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+            <tbody>
+              {Object.entries(porTipoBanco).map(([tipo, val]) => (
+                <tr key={tipo} style={{ borderBottom: '1px solid #F0F3FA' }}>
+                  <td style={{ padding: '8px 0', color: '#5A6478' }}>{tipo}</td>
+                  <td style={{ textAlign: 'right', fontFamily: "'DM Mono',monospace", fontWeight: 600, color: '#1B5FAA' }}>{R(val)}</td>
+                </tr>
+              ))}
+              <tr style={{ background: '#F0FBF4' }}>
+                <td style={{ padding: '8px 0', fontWeight: 700, color: '#145C35' }}>TOTAL CRÉDITOS</td>
+                <td style={{ textAlign: 'right', fontFamily: "'DM Mono',monospace", fontWeight: 700, color: '#145C35' }}>{R(totalCreditos)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style={{ background: '#fff', border: '1px solid #E8EDF5', borderRadius: 10, padding: '14px 18px' }}>
+          <p style={{ fontSize: 13, fontWeight: 600, color: '#2A3348', marginBottom: 12 }}>Entrada por tipo — IXC</p>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+            <tbody>
+              <tr style={{ borderBottom: '1px solid #F0F3FA' }}>
+                <td style={{ padding: '8px 0', color: '#5A6478' }}>Valor Bruto</td>
+                <td style={{ textAlign: 'right', fontFamily: "'DM Mono',monospace", fontWeight: 600, color: '#5A6478' }}>{R(totBrutoIXC)}</td>
+              </tr>
+              <tr style={{ borderBottom: '1px solid #F0F3FA' }}>
+                <td style={{ padding: '8px 0', color: '#5A6478' }}>(–) Descontos</td>
+                <td style={{ textAlign: 'right', fontFamily: "'DM Mono',monospace", fontWeight: 600, color: '#B86A10' }}>– {R(sum(ixcDaily, r => r.desc))}</td>
+              </tr>
+              <tr style={{ borderBottom: '1px solid #F0F3FA' }}>
+                <td style={{ padding: '8px 0', color: '#5A6478' }}>(+) Acréscimos</td>
+                <td style={{ textAlign: 'right', fontFamily: "'DM Mono',monospace", fontWeight: 600, color: '#1A8A55' }}>+ {R(sum(ixcDaily, r => r.acre))}</td>
+              </tr>
+              <tr style={{ background: '#F0FBF4' }}>
+                <td style={{ padding: '8px 0', fontWeight: 700, color: '#145C35' }}>VALOR LÍQUIDO</td>
+                <td style={{ textAlign: 'right', fontFamily: "'DM Mono',monospace", fontWeight: 700, color: '#145C35' }}>{R(totIXC)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <TableCard>
+        <table>
+          <thead>
+            <tr>
+              <th style={{ width: 60 }}>Data</th>
+              <th style={{ textAlign: 'right' }}>Banco Crédito (R$)</th>
+              <th style={{ textAlign: 'right' }}>IXC Líquido (R$)</th>
+              <th style={{ textAlign: 'right' }}>Diferença (R$)</th>
+              <th style={{ textAlign: 'center' }}>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {porDia.map((d, i) => {
+              const diff = parseFloat((d.banco - d.ixc).toFixed(2))
+              const ok = Math.abs(diff) < 0.02
+              return (
+                <tr key={d.data} style={{ background: i % 2 === 0 ? '#fff' : '#FAFBFE' }}>
+                  <td style={{ fontFamily: "'DM Mono',monospace", fontSize: 11 }}>{d.data}</td>
+                  <td style={{ textAlign: 'right', fontFamily: "'DM Mono',monospace", color: '#1B5FAA', fontWeight: 600 }}>{N(d.banco)}</td>
+                  <td style={{ textAlign: 'right', fontFamily: "'DM Mono',monospace", color: '#0F6E56', fontWeight: 600 }}>{N(d.ixc)}</td>
+                  <td style={{ textAlign: 'right', fontFamily: "'DM Mono',monospace", color: ok ? '#1A8A55' : '#C0392B', fontWeight: 700 }}>{N(Math.abs(diff))}</td>
+                  <td style={{ textAlign: 'center' }}>
+                    <span style={{ background: ok ? '#D4EEE5' : '#FEE2E0', color: ok ? '#064535' : '#C0392B', padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700 }}>{ok ? '✓ OK' : '⚠ DIF'}</span>
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>TOTAL</td>
+              <td style={{ textAlign: 'right', fontFamily: "'DM Mono',monospace", color: '#1B5FAA', fontWeight: 700 }}>{N(totalCreditosBanco)}</td>
+              <td style={{ textAlign: 'right', fontFamily: "'DM Mono',monospace", color: '#0F6E56', fontWeight: 700 }}>{N(totIXC)}</td>
+              <td style={{ textAlign: 'right', fontFamily: "'DM Mono',monospace", color: totalCreditosBanco === totIXC ? '#1A8A55' : '#C0392B', fontWeight: 700 }}>{N(Math.abs(totalCreditosBanco - totIXC))}</td>
+              <td style={{ textAlign: 'center' }}>
+                <span style={{ background: totalCreditosBanco === totIXC ? '#D4EEE5' : '#FEE2E0', color: totalCreditosBanco === totIXC ? '#064535' : '#C0392B', padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700 }}>
+                  {totalCreditosBanco === totIXC ? '✓ CONCILIADO' : '⚠ DIVERGÊNCIA'}
+                </span>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </TableCard>
+    </div>
+  )
+}
+
 function TabDashboard({ extrato, ixcDaily, movim, conc, periodo }) {
   const { totBoleto, totTarifa, totDebConv, totIXC, totPIX, totEstorno, diff, conciliado } = conc
   const chartData = (() => {
@@ -834,22 +970,9 @@ function TabConciliacao({ conc, periodo }) {
 // }
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
-const TABS = [
-  { id: 'import', label: '📤 Importar', lock: false },
-  { id: 'dashboard', label: '📊 Dashboard', lock: true },
-  { id: 'extrato', label: '🏦 Extrato', lock: true },
-  { id: 'tarifas', label: '💰 Tarifas', lock: true },
-  { id: 'debConv', label: '🏢 Déb.Conv.', lock: true },
-  { id: 'debito', label: '💸 Débitos', lock: true },
-  { id: 'movimentacao', label: '📑 Movimentação', lock: true },
-  { id: 'ixc', label: '📋 IXC', lock: true },
-  { id: 'conciliacao', label: '🔗 Conciliação', lock: true },
-]
-
 export default function ConciliadorApp() {
-  const [screen, setScreen] = useState('upload')
-  const [activeTab, setActiveTab] = useState('import')
-  const [periodo, setPeriodo] = useState('')
+  const { activeTab, setActiveTab, screen, setScreen, hasData: hasDataContext, setHasData, periodo, setPeriodo, showSaldo, setShowSaldo } = useApp()
+  
   const [extrato, setExtrato] = useState([])
   const [movim, setMovim] = useState(null)
   const [ixcDaily, setIxcDaily] = useState([])
@@ -857,8 +980,12 @@ export default function ConciliadorApp() {
   const [conc, setConc] = useState(null)
   const [steps, setSteps] = useState([])
   const [exporting, setExporting] = useState(false)
-  const [showSaldo, setShowSaldo] = useState(true)
+  
   const hasData = extrato.length > 0 && ixcDaily.length > 0
+  
+  useEffect(() => {
+    setHasData(hasData)
+  }, [hasData, setHasData])
 
   const handlePrint = useCallback(() => {
     window.print()
@@ -866,12 +993,12 @@ export default function ConciliadorApp() {
 
   const upd = (id, status, sub = '') => setSteps(p => p.map(s => s.id === id ? { ...s, status, sub } : s))
 
-  const handleDemo = useCallback(p => {
-    const { extrato: e, ixcDaily: d, ixcRecords: r, movim: mv } = loadDemo()
-    setExtrato(e); setIxcDaily(d); setIxcRecs(r); setMovim(mv)
-    setConc(reconcile(e, d)); setPeriodo(p)
-    setScreen('results'); setActiveTab('dashboard')
-  }, [])
+  // const handleDemo = useCallback(p => {
+  //   const { extrato: e, ixcDaily: d, ixcRecords: r, movim: mv } = loadDemo()
+  //   setExtrato(e); setIxcDaily(d); setIxcRecs(r); setMovim(mv)
+  //   setConc(reconcile(e, d)); setPeriodo(p)
+  //   setScreen('results'); setActiveTab('dashboard')
+  // }, [setActiveTab, setPeriodo])
 
   const handleProcess = useCallback(async (files, p) => {
     setSteps([
@@ -902,7 +1029,7 @@ export default function ConciliadorApp() {
       console.error(err)
       setSteps(p => p.map(s => s.status === 'run' || s.status === 'wait' ? { ...s, status: 'err', sub: err.message } : s))
     }
-  }, [])
+  }, [setActiveTab])
 
   const handleExport = useCallback(async () => {
     if (!hasData) return
@@ -913,49 +1040,37 @@ export default function ConciliadorApp() {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#F4F6FB' }}>
-      <div style={{ background: '#0F2D6B', padding: '0 24px' }}>
+<div style={{ background: '#0F2D6B', padding: '0 24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 56, gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <div style={{ width: 34, height: 34, background: 'linear-gradient(135deg,#3B82F6,#1B5FAA)', borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17 }}>💠</div>
-            {/* <div>
-              <p style={{ color: '#fff', fontWeight: 700, fontSize: 14 }}>FiberNet Conciliador</p>
-              <p style={{ color: '#8BAADD', fontSize: 11 }}>{EMPRESA} · {CNPJ}</p>
-            </div> */}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ textAlign: 'right', marginRight: 4 }}>
-              {/* <p style={{ color: '#C8D8F0', fontSize: 11 }}>{CONTA}</p> */}
               <p style={{ color: '#8BAADD', fontSize: 11 }}>{periodo ? `Período: ${periodo}` : 'Nenhum período carregado'}</p>
             </div>
             <button onClick={() => setShowSaldo(!showSaldo)}
               style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '7px 12px', background: showSaldo ? '#0F6E56' : '#6B7280', color: '#fff', border: 'none', borderRadius: 7, fontSize: 12, fontWeight: 500, whiteSpace: 'nowrap', cursor: 'pointer', transition: 'all .2s' }}>
-              {showSaldo ? '👁️ Mostrar Saldo' : '🔒 Esconder Saldo'}
+              {showSaldo ? '👁️' : '🔒'} {showSaldo ? 'Saldo' : 'Oculto'}
             </button>
             <button onClick={handlePrint}
               style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '7px 12px', background: '#7C3AED', color: '#fff', border: 'none', borderRadius: 7, fontSize: 12, fontWeight: 500, whiteSpace: 'nowrap', cursor: 'pointer', transition: 'all .2s' }}>
-              🖨️ Imprimir
+              🖨️
             </button>
             <button disabled={!hasData || exporting} onClick={handleExport}
               style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '7px 16px', background: hasData ? '#2563EB' : '#1A3A7A', color: '#fff', border: 'none', borderRadius: 7, fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', cursor: hasData ? 'pointer' : 'not-allowed', opacity: hasData ? 1 : .5, transition: 'all .2s' }}>
-              {exporting ? '⟳ Exportando...' : '⬇ Exportar Excel'}
+              {exporting ? '⟳' : '⬇'} {exporting ? 'Exportando...' : 'Excel'}
             </button>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 2, paddingTop: 4 }}>
-          {TABS.map(t => (
-            <button key={t.id} disabled={t.lock && !hasData} onClick={() => { setActiveTab(t.id); if (screen !== 'results') setScreen('results') }}
-              style={{ padding: '8px 16px', fontSize: 13, fontWeight: activeTab === t.id ? 600 : 400, color: activeTab === t.id ? '#fff' : (t.lock && !hasData) ? '#3A5080' : '#8BAADD', background: activeTab === t.id ? 'rgba(255,255,255,.12)' : 'none', border: 'none', borderBottom: activeTab === t.id ? '2px solid #60A5FA' : '2px solid transparent', cursor: (t.lock && !hasData) ? 'not-allowed' : 'pointer', borderRadius: '6px 6px 0 0', fontFamily: 'inherit', transition: 'all .15s', whiteSpace: 'nowrap' }}>
-              {t.label}
-            </button>
-          ))}
-        </div>
       </div>
       <div style={{ padding: '22px 24px', maxWidth: 1240, margin: '0 auto', width: '100%', flex: 1 }}>
-        {screen === 'upload' && <ScreenUpload onProcess={handleProcess} onDemo={handleDemo} />}
+        {screen === 'upload' && <ScreenUpload onProcess={handleProcess} />}
         {screen === 'processing' && <ScreenProcessing steps={steps} />}
         {screen === 'results' && hasData && conc && (
           <>
             {activeTab === 'dashboard' && <TabDashboard extrato={extrato} ixcDaily={ixcDaily} movim={movim} conc={conc} periodo={periodo} />}
+            {activeTab === 'comparacao' && <TabComparacao extrato={extrato} ixcDaily={ixcDaily} ixcRecords={ixcRecs} conc={conc} periodo={periodo} />}
             {activeTab === 'extrato' && <TabExtrato extrato={extrato} showSaldo={showSaldo} />}
             {activeTab === 'tarifas' && <TabExtrato extrato={extrato} filtroForcado="Tarifa" showSaldo={showSaldo} />}
             {activeTab === 'debConv' && <TabExtrato extrato={extrato} filtroForcado="Déb.Conv." showSaldo={showSaldo} />}
