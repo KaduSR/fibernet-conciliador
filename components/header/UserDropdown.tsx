@@ -13,6 +13,10 @@ export default function UserDropdown() {
 
   useEffect(() => {
     const supabase = createClient();
+    if (!supabase) {
+      setUser(null);
+      return;
+    }
     supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
   }, []);
 
@@ -28,6 +32,10 @@ function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
   const handleLogout = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     const supabase = createClient();
+    if (!supabase) {
+      window.location.href = '/login';
+      return;
+    }
     await supabase.auth.signOut();
     window.location.href = '/login';
   };

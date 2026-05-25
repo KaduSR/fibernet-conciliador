@@ -58,6 +58,44 @@ async function extractPDFText(file) {
   return text
 }
 
+async function extractIXCData(file) {
+  const name = (file?.name || '').toLowerCase()
+  if (name.endsWith('.pdf')) {
+    const text = await extractPDFText(file)
+    return parseIXCRelatorio(text)
+  }
+
+  const raw = await file.text()
+  if (name.endsWith('.json')) {
+    const json = JSON.parse(raw)
+    const items = Array.isArray(json) ? json : (json?.data || json?.records || [])
+    const records = items.map((item) => ({
+      dataVenc: (item.data_vencimento || item.data_venc || '').substring(0, 10),
+      dataRec: (item.data_pagamento || item.data_recebimento || item.data_rec || '').substring(0, 10).substring(0, 5),
+      cliente: (item.cliente || item.nome_cliente || item.razao_social || 'Não identificado').toString().trim().substring(0, 40),
+      baixa: parseFloat(item.valor_pago || item.baixa || item.valor || 0),
+      acre: parseFloat(item.acrescimo || item.acre || 0),
+      desc: parseFloat(item.desconto || item.desc || 0),
+      liq: parseFloat(item.valor_liquido || item.liquido || item.valor_pago || item.valor || 0),
+    })).filter(r => r.dataRec)
+
+    const dailyMap = {}
+    records.forEach((rec) => {
+      if (!dailyMap[rec.dataRec]) dailyMap[rec.dataRec] = { data: rec.dataRec, tit: 0, bruto: 0, desc: 0, acre: 0, liq: 0 }
+      dailyMap[rec.dataRec].tit++
+      dailyMap[rec.dataRec].bruto += rec.baixa
+      dailyMap[rec.dataRec].desc += rec.desc
+      dailyMap[rec.dataRec].acre += rec.acre
+      dailyMap[rec.dataRec].liq += rec.liq
+    })
+    const daily = Object.values(dailyMap)
+    return { daily, records }
+  }
+
+  // fallback para TXT/CSV exportado da API/relatório
+  return parseIXCRelatorio(raw)
+}
+
 // ─── PARSERS ──────────────────────────────────────────────────────────────────
 function parseSicoobExtrato(text) {
   const entries = []
@@ -166,6 +204,68 @@ function reconcile(extrato, ixcDaily) {
   return { totBoleto, totTarifa, totDebConv, totPIX, totEstorno, totIXC, diff, porDia, divergencias: porDia.filter(d => !d.ok), conciliado: Math.abs(diff) < 0.02 }
 }
 
+function normalizeName(v = '') {
+  return v
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Z0-9\s]/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toUpperCase()
+}
+
+function buildBoletoDivergencias(ixcRecords, movimRecords) {
+  const bankUsed = new Set()
+  const divergencias = []
+  const cents = v => Math.round(Number(v || 0) * 100)
+
+  ixcRecords.forEach((ixc) => {
+    const ixcDate = ixc.dataRec
+    const ixcVal = cents(ixc.liq)
+    const ixcName = normalizeName(ixc.cliente)
+    const candidates = movimRecords
+      .map((b, idx) => ({ ...b, idx }))
+      .filter((b) => !bankUsed.has(b.idx) && b.dataLiq === ixcDate && cents(b.valCobrado) === ixcVal)
+
+    if (candidates.length === 0) {
+      divergencias.push({
+        cliente: ixc.cliente || 'Cliente não identificado',
+        origem: 'IXC',
+        data: ixcDate,
+        valor: ixc.liq,
+        motivo: 'Título existe no IXC, mas não foi encontrado no arquivo de Movimentação Sicoob.'
+      })
+      return
+    }
+
+    const byName = candidates.find((b) => {
+      const bankName = normalizeName(b.sacado)
+      return bankName && (bankName.includes(ixcName) || ixcName.includes(bankName))
+    })
+    const selected = byName || candidates[0]
+    bankUsed.add(selected.idx)
+
+    if (!byName) {
+      divergencias.push({
+        cliente: ixc.cliente || selected.sacado || 'Cliente não identificado',
+        origem: 'IXC/Sicoob',
+        data: ixcDate,
+        valor: ixc.liq,
+        motivo: `Nome divergente entre os arquivos (IXC: "${ixc.cliente}" × Sicoob: "${selected.sacado}").`
+      })
+    }
+  })
+
+  // A aba é orientada ao IXC: exibimos divergências apenas para títulos presentes no IXC.
+  // Se existir apenas no Sicoob, ele não entra aqui por não haver cliente de referência no IXC.
+
+  return divergencias.sort((a, b) => {
+    const [da, ma] = (a.data || '00/00').split('/').map(Number)
+    const [db, mb] = (b.data || '00/00').split('/').map(Number)
+    return ma !== mb ? ma - mb : da - db
+  })
+}
+
 // ─── EXCEL EXPORT ─────────────────────────────────────────────────────────────
 async function exportarExcel({ extrato, ixcDaily, ixcRecords, movim, conc, periodo }) {
   const XLSX = await import('xlsx')
@@ -253,7 +353,7 @@ async function exportarExcel({ extrato, ixcDaily, ixcRecords, movim, conc, perio
 function UploadCard({ icon, title, subtitle, bg, file, onFile, onRemove }) {
   const ref = useRef(null)
   const [hover, setHover] = useState(false)
-  const drop = e => { e.preventDefault(); setHover(false); const f = e.dataTransfer.files[0]; if (f?.type === 'application/pdf') onFile(f) }
+  const drop = e => { e.preventDefault(); setHover(false); const f = e.dataTransfer.files[0]; if (f) onFile(f) }
   return (
     <div onDragOver={e => { e.preventDefault(); setHover(true) }} onDragLeave={() => setHover(false)} onDrop={drop}
       style={{ background: file ? '#F0FBF4' : hover ? '#F0F5FF' : '#fff', border: `2px ${file ? 'solid #1A8A55' : 'dashed ' + (hover ? '#1B5FAA' : '#CBD5E8')}`, borderRadius: 12, padding: '22px 18px', textAlign: 'center', transition: 'all .2s' }}>
@@ -272,7 +372,7 @@ function UploadCard({ icon, title, subtitle, bg, file, onFile, onRemove }) {
           <p style={{ fontSize: 11, color: '#B0BAD0' }}>ou clique para selecionar</p>
         </div>
       )}
-      <input type="file" ref={ref} accept=".pdf" onChange={e => e.target.files[0] && onFile(e.target.files[0])} />
+      <input type="file" ref={ref} accept=".pdf,.json,.csv,.txt" onChange={e => e.target.files[0] && onFile(e.target.files[0])} />
     </div>
   )
 }
@@ -307,7 +407,7 @@ function ScreenUpload({ onProcess }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', gap: 16, marginBottom: 22 }}>
         <UploadCard icon="🏦" title="Extrato Sicoob" subtitle={"Extrato Conta Corrente\nLayout 1 — PDF"} bg="#EBF2FF" file={files.extrato} onFile={f => setFiles(p => ({ ...p, extrato: f }))} onRemove={() => setFiles(p => ({ ...p, extrato: null }))} />
         <UploadCard icon="📑" title="Movimentação Sicoob" subtitle={"Relatório Liquidação/Baixa\nSicoobNet — PDF"} bg="#D4EEE5" file={files.movim} onFile={f => setFiles(p => ({ ...p, movim: f }))} onRemove={() => setFiles(p => ({ ...p, movim: null }))} />
-        <UploadCard icon="📋" title="IXC Recebimentos" subtitle={"Relatório de Recebimentos\nIXC Provedor — PDF"} bg="#FDE8C6" file={files.ixc} onFile={f => setFiles(p => ({ ...p, ixc: f }))} onRemove={() => setFiles(p => ({ ...p, ixc: null }))} />
+        <UploadCard icon="📋" title="IXC Recebimentos" subtitle={"IXC por PDF/JSON/CSV/TXT\n(export API ou relatório)"} bg="#FDE8C6" file={files.ixc} onFile={f => setFiles(p => ({ ...p, ixc: f }))} onRemove={() => setFiles(p => ({ ...p, ixc: null }))} />
       </div>
       <button disabled={!ready} onClick={() => onProcess(files, MESES[mes] + ' ' + ano)}
         style={{ width: '100%', padding: 14, fontSize: 15, fontWeight: 700, background: ready ? '#1B5FAA' : '#C5D3E8', color: ready ? '#fff' : '#8A95A8', border: 'none', borderRadius: 10, cursor: ready ? 'pointer' : 'not-allowed', marginBottom: 10, transition: 'all .2s' }}>
@@ -802,6 +902,40 @@ function TabConciliacao({ conc, periodo }) {
   )
 }
 
+function TabDivergenciasBoletos({ divergencias }) {
+  return (
+    <div>
+      <div style={{ background: divergencias.length ? '#FEF3F2' : '#F0FBF4', border: `1px solid ${divergencias.length ? '#FDA29B' : '#A3E0BB'}`, borderRadius: 10, padding: '14px 20px', marginBottom: 18 }}>
+        <p style={{ fontWeight: 700, color: divergencias.length ? '#912018' : '#145C35', fontSize: 15 }}>
+          {divergencias.length ? `⚠ ${divergencias.length} boleto(s) com divergência` : '✅ Nenhuma divergência de boletos'}
+        </p>
+        <p style={{ color: divergencias.length ? '#B42318' : '#1A8A55', fontSize: 12, marginTop: 4 }}>
+          Lista baseada no IXC: compara cada título do IXC com a movimentação Sicoob por data/valor e valida o nome do cliente.
+        </p>
+      </div>
+      <TableCard>
+        <table>
+          <thead><tr><th>Data</th><th>Cliente</th><th>Origem</th><th style={{ textAlign: 'right' }}>Valor (R$)</th><th>Motivo da divergência</th></tr></thead>
+          <tbody>
+            {divergencias.length === 0 && (
+              <tr><td colSpan={5} style={{ textAlign: 'center', color: '#6B7A96', padding: 20 }}>Nenhum boleto divergente encontrado.</td></tr>
+            )}
+            {divergencias.map((d, i) => (
+              <tr key={`${d.cliente}-${d.data}-${i}`} style={{ background: i % 2 === 0 ? '#fff' : '#FAFBFE' }}>
+                <td style={{ fontFamily: "'DM Mono',monospace", fontSize: 11 }}>{d.data}</td>
+                <td style={{ maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.cliente}</td>
+                <td><Badge tipo={d.origem} /></td>
+                <td style={{ textAlign: 'right', fontFamily: "'DM Mono',monospace", color: '#1B5FAA', fontWeight: 600 }}>{N(d.valor)}</td>
+                <td style={{ color: '#7A1F1F' }}>{d.motivo}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </TableCard>
+    </div>
+  )
+}
+
 // ─── DEMO DATA ────────────────────────────────────────────────────────────────
 // function loadDemo() {
 //   const extrato = [
@@ -978,6 +1112,7 @@ export default function ConciliadorApp() {
   const [ixcDaily, setIxcDaily] = useState([])
   const [ixcRecs, setIxcRecs] = useState([])
   const [conc, setConc] = useState(null)
+  const [boletoDivergencias, setBoletoDivergencias] = useState([])
   const [steps, setSteps] = useState([])
   const [exporting, setExporting] = useState(false)
   
@@ -1016,14 +1151,15 @@ export default function ConciliadorApp() {
       const t2 = await extractPDFText(files.movim), mv = parseSicoobMovim(t2)
       upd('s2', 'ok', `${mv.records.length} registros · liquidado: ${R(mv.totalLiquidado)}`)
       upd('s3', 'run')
-      const t3 = await extractPDFText(files.ixc), { daily, records } = parseIXCRelatorio(t3)
+      const { daily, records } = await extractIXCData(files.ixc)
       upd('s3', 'ok', `${sum(daily, d => d.tit)} títulos · ${R(sum(daily, d => d.liq))}`)
       upd('s4', 'run')
       await new Promise(r => setTimeout(r, 500))
       const c = reconcile(e, daily)
+      const divBoletos = buildBoletoDivergencias(records, mv.records)
       upd('s4', 'ok', c.conciliado ? '✓ Zero divergências' : `⚠ ${c.divergencias.length} divergência(s)`)
       await new Promise(r => setTimeout(r, 400))
-      setExtrato(e); setMovim(mv); setIxcDaily(daily); setIxcRecs(records); setConc(c)
+      setExtrato(e); setMovim(mv); setIxcDaily(daily); setIxcRecs(records); setConc(c); setBoletoDivergencias(divBoletos)
       setScreen('results'); setActiveTab('dashboard')
     } catch (err) {
       console.error(err)
@@ -1078,6 +1214,7 @@ export default function ConciliadorApp() {
             {activeTab === 'movimentacao' && <TabMovimentacao movim={movim} />}
             {activeTab === 'ixc' && <TabIXC ixcDaily={ixcDaily} ixcRecords={ixcRecs} />}
             {activeTab === 'conciliacao' && <TabConciliacao conc={conc} periodo={periodo} />}
+            {activeTab === 'divergenciasBoletos' && <TabDivergenciasBoletos divergencias={boletoDivergencias} />}
           </>
         )}
       </div>
