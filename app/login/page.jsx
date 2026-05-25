@@ -18,6 +18,11 @@ export default function LoginPage() {
     setError(null)
 
     const supabase = createClient()
+    if (!supabase) {
+      setError('Supabase não configurado. Defina NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY.')
+      setLoading(false)
+      return
+    }
 
     if (isSignUp) {
       const { error } = await supabase.auth.signUp({ email, password })
