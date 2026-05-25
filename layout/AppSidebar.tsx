@@ -30,6 +30,7 @@ const CONCILIADOR_TABS = [
   { id: 'movimentacao', label: '📑 Movimentação', icon: '📑' },
   { id: 'ixc', label: '📋 IXC', icon: '📋' },
   { id: 'conciliacao', label: '🔗 Conciliação', icon: '🔗' },
+  { id: 'divergenciasBoletos', label: '🧾 Diverg. Boletos', icon: '🧾' },
 ]
 
 type NavItem = {
